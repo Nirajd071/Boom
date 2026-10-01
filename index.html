@@ -2701,8 +2701,14 @@
 
     function getNextBirthdayDate() {
       const now = new Date();
-      // Targeted for testing at 18:20 today
-      return new Date(now.getFullYear(), now.getMonth(), now.getDate(), 18, 20, 0);
+      const urlParams = new URLSearchParams(window.location.search);
+      const timeParam = urlParams.get('time');
+      if (timeParam && timeParam.includes(':')) {
+        const [h, m] = timeParam.split(':').map(Number);
+        return new Date(now.getFullYear(), now.getMonth(), now.getDate(), h, m, 0);
+      }
+      // Targeted for testing at 18:26 today
+      return new Date(now.getFullYear(), now.getMonth(), now.getDate(), 18, 26, 0);
     }
 
     function isBirthdayToday() {
