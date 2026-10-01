@@ -1972,10 +1972,10 @@
     <div id="intro-locked-vault-card" class="locked-vault-card" style="margin-top: 0; margin-bottom: 1.5rem;">
       <div class="locked-vault-title">
         <span>🔒</span>
-        <span>Gift Locked Until October 2</span>
+        <span id="intro-locked-vault-title-text">Gift Locked Until October 2</span>
         <span>⏳</span>
       </div>
-      <p class="locked-vault-desc">
+      <p class="locked-vault-desc" id="intro-locked-vault-desc">
         Your timeline, memory gallery, and brother's letter are safely sealed. The moment the clock strikes October 2, the entire gift unlocks right here!
       </p>
     </div>
@@ -2789,13 +2789,38 @@
 
     function getNextBirthdayDate() {
       const now = new Date();
-      // Test target: 7:00 PM (19:00:00) today
-      return new Date(now.getFullYear(), now.getMonth(), now.getDate(), 19, 0, 0);
+      const currentYear = now.getFullYear();
+
+      // Target 1: Midnight 00:00:00 (Start of October 2)
+      const midnightOct2 = new Date(currentYear, CONFIG.birthdayMonth, CONFIG.birthdayDay, 0, 0, 0);
+
+      // Target 2: 10:00:00 AM October 2 (Morning prank target)
+      const morning10am = new Date(currentYear, CONFIG.birthdayMonth, CONFIG.birthdayDay, 10, 0, 0);
+
+      // Phase 1 (Right now before midnight): Count down to 00:00:00 Midnight!
+      if (now < midnightOct2) {
+        return midnightOct2;
+      }
+
+      // Phase 2 (Once October 2 arrives at 00:00:00): Prank shifts countdown to 10:00 AM!
+      if (now < morning10am) {
+        return morning10am;
+      }
+
+      // Phase 3: Past 10:00 AM today (if past midnight on Oct 2 end, target next year)
+      const endOfBday = new Date(currentYear, CONFIG.birthdayMonth, CONFIG.birthdayDay, 23, 59, 59);
+      if (now > endOfBday) {
+        return new Date(currentYear + 1, CONFIG.birthdayMonth, CONFIG.birthdayDay, 10, 0, 0);
+      }
+      return morning10am;
     }
 
     function isBirthdayToday() {
       const now = new Date();
-      return now >= getNextBirthdayDate();
+      const currentYear = now.getFullYear();
+      const morning10am = new Date(currentYear, CONFIG.birthdayMonth, CONFIG.birthdayDay, 10, 0, 0);
+      const endOfBday = new Date(currentYear, CONFIG.birthdayMonth, CONFIG.birthdayDay, 23, 59, 59);
+      return (now >= morning10am && now <= endOfBday);
     }
 
     function updateLockAndCountdown() {
@@ -2832,6 +2857,21 @@
       if (introCountdownView) introCountdownView.style.display = 'block';
       if (introLockedCard) introLockedCard.style.display = 'flex';
       if (introUnwrapBtn) introUnwrapBtn.style.display = 'none';
+
+      // Dynamic Vault Card text based on prank phase
+      const introVaultTitle = document.getElementById('intro-locked-vault-title-text');
+      const introVaultDesc = document.getElementById('intro-locked-vault-desc');
+      const currentYear = now.getFullYear();
+      const midnightOct2 = new Date(currentYear, CONFIG.birthdayMonth, CONFIG.birthdayDay, 0, 0, 0);
+      const morning10am = new Date(currentYear, CONFIG.birthdayMonth, CONFIG.birthdayDay, 10, 0, 0);
+
+      if (now >= midnightOct2 && now < morning10am) {
+        if (introVaultTitle) introVaultTitle.textContent = "Gift Locked Until 10:00 AM";
+        if (introVaultDesc) introVaultDesc.textContent = "Gotcha! You thought it would unlock at midnight? 🤭 The real birthday surprise unlocks at 10:00 AM in the morning!";
+      } else if (now < midnightOct2) {
+        if (introVaultTitle) introVaultTitle.textContent = "Gift Locked Until October 2";
+        if (introVaultDesc) introVaultDesc.textContent = "Your timeline, memory gallery, and brother's letter are safely sealed. The moment the clock strikes October 2, the entire gift unlocks right here!";
+      }
 
       const d = Math.floor(diff / (1000 * 60 * 60 * 24));
       const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
