@@ -1477,8 +1477,8 @@
 
     .letter-signoff {
       margin-top: 3rem;
-      border-top: 1px solid rgba(244, 180, 170, 0.28);
-      padding-top: 2rem;
+      border-top: none;
+      padding-top: 1.5rem;
       display: flex;
       justify-content: space-between;
       align-items: flex-end;
@@ -1498,6 +1498,10 @@
       display: flex;
       align-items: flex-end;
       justify-content: flex-end;
+      border: none;
+      outline: none;
+      background: transparent;
+      box-shadow: none;
     }
 
     .kabeer-signoff-cutout {
@@ -1505,18 +1509,18 @@
       width: auto;
       max-width: 175px;
       object-fit: contain;
-      opacity: 0.8;
-      filter: brightness(0.85) contrast(0.95) drop-shadow(0 10px 24px rgba(0, 0, 0, 0.6)) drop-shadow(0 0 16px rgba(244, 180, 170, 0.22));
+      opacity: 0.88;
+      filter: grayscale(100%) contrast(1.04) drop-shadow(0 8px 22px rgba(0, 0, 0, 0.65));
       transition: opacity 0.3s ease, filter 0.3s ease, transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
       user-select: none;
       -webkit-user-drag: none;
-      mask-image: linear-gradient(to bottom, black 85%, transparent 100%);
-      -webkit-mask-image: linear-gradient(to bottom, black 85%, transparent 100%);
+      border: none;
+      outline: none;
     }
 
     .kabeer-signoff-cutout:hover {
-      opacity: 0.95;
-      filter: brightness(0.92) contrast(1) drop-shadow(0 12px 28px rgba(0, 0, 0, 0.7)) drop-shadow(0 0 20px rgba(244, 180, 170, 0.3));
+      opacity: 1;
+      filter: grayscale(100%) contrast(1.08) drop-shadow(0 12px 28px rgba(0, 0, 0, 0.8));
       transform: translateY(-4px) scale(1.04);
     }
 
@@ -2369,7 +2373,7 @@
                   </p>
                 </div>
                 <div class="letter-signoff-cutout-wrap" title="Niraj">
-                  <img src="pictures_cutouts/kabeer_cutout.png?v=3" alt="Niraj" class="kabeer-signoff-cutout" />
+                  <img src="pictures_cutouts/kabeer_cutout.png?v=4" alt="Niraj" class="kabeer-signoff-cutout" />
                 </div>
               </div>
             </div>
