@@ -2685,18 +2685,14 @@
     const celebrationView = document.getElementById('celebration-view');
     const previewToggleBtn = document.getElementById('preview-celebration-toggle');
 
-    // Default: Countdown mode is active until October 2.
-    // Secret preview support: Add ?preview=true to the URL to preview the full celebration anytime.
+    // UNLOCKED BY DEFAULT FOR TESTING:
+    // Entire website is fully accessible and unlocked.
     const urlParams = new URLSearchParams(window.location.search);
-    let forceCelebrationPreview = urlParams.get('preview') === 'true' || urlParams.get('preview') === '1';
+    let forceCelebrationPreview = urlParams.get('locked') === 'true' ? false : true;
 
-    // Hide developer test button by default so it's clean and authentic for Dii
+    // Show preview toggle button so mode can be toggled at will
     if (previewToggleBtn) {
-      if (urlParams.has('preview') || urlParams.has('dev')) {
-        previewToggleBtn.style.display = 'inline-block';
-      } else {
-        previewToggleBtn.style.display = 'none';
-      }
+      previewToggleBtn.style.display = 'inline-block';
     }
 
     function getNextBirthdayDate() {
