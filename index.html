@@ -293,8 +293,21 @@
     .intro-sub {
       color: var(--rose-gold);
       font-size: 1.1rem;
-      margin-bottom: 2rem;
+      margin-bottom: 1.5rem;
       font-weight: 300;
+    }
+
+    .intro-countdown-box {
+      background: rgba(35, 14, 40, 0.75);
+      border: 1px solid var(--border-glass-bright);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      padding: 1.1rem 1.5rem;
+      border-radius: var(--radius-md);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.45), 0 0 25px rgba(184, 76, 114, 0.25);
+      max-width: 480px;
+      width: 100%;
+      margin: 0 auto 1.5rem;
     }
 
     .unwrap-btn {
@@ -1860,6 +1873,37 @@
     </div>
     <h1 class="intro-title">A Gift for My Dearest Dii</h1>
     <p class="intro-sub">From a stranger on 16 Feb, to the sister I can't imagine my life without.</p>
+
+    <!-- Live Countdown directly on First Screen -->
+    <div class="intro-countdown-box" id="intro-countdown-view">
+      <div class="countdown-title" style="margin-bottom: 0.75rem; font-size: 0.85rem;">
+        <span>⏳</span>
+        <span>Counting Down to October 2</span>
+        <span>✨</span>
+      </div>
+      <div class="countdown-grid" style="grid-template-columns: repeat(4, 1fr); gap: 0.6rem;">
+        <div class="count-unit" style="padding: 0.7rem 0.35rem;">
+          <span class="count-number" id="intro-days-val" style="font-size: clamp(1.4rem, 3.2vw, 2.1rem);">00</span>
+          <span class="count-label">Days</span>
+        </div>
+        <div class="count-unit" style="padding: 0.7rem 0.35rem;">
+          <span class="count-number" id="intro-hours-val" style="font-size: clamp(1.4rem, 3.2vw, 2.1rem);">00</span>
+          <span class="count-label">Hours</span>
+        </div>
+        <div class="count-unit" style="padding: 0.7rem 0.35rem;">
+          <span class="count-number" id="intro-minutes-val" style="font-size: clamp(1.4rem, 3.2vw, 2.1rem);">00</span>
+          <span class="count-label">Minutes</span>
+        </div>
+        <div class="count-unit" style="padding: 0.7rem 0.35rem;">
+          <span class="count-number" id="intro-seconds-val" style="font-size: clamp(1.4rem, 3.2vw, 2.1rem);">00</span>
+          <span class="count-label">Seconds</span>
+        </div>
+      </div>
+      <div style="font-size: 0.82rem; color: var(--rose-gold-light); margin-top: 0.5rem; opacity: 0.9;">
+        🔒 Sealed with love • Automatically unlocks at Midnight 💌
+      </div>
+    </div>
+
     <button class="unwrap-btn" id="intro-unwrap-btn">
       <span>Tap to Unwrap Your Gift</span>
       <span>✨</span>
@@ -2684,6 +2728,13 @@
     const countdownView = document.getElementById('countdown-timer-view');
     const celebrationView = document.getElementById('celebration-view');
 
+    // First page (intro screen) countdown elements
+    const introCountdownView = document.getElementById('intro-countdown-view');
+    const introDaysEl = document.getElementById('intro-days-val');
+    const introHoursEl = document.getElementById('intro-hours-val');
+    const introMinutesEl = document.getElementById('intro-minutes-val');
+    const introSecondsEl = document.getElementById('intro-seconds-val');
+
     let hasAutoCelebrated = false;
 
     function getNextBirthdayDate() {
@@ -2721,6 +2772,10 @@
         celebrationView.style.display = 'block';
         if (lockedHintView) lockedHintView.style.display = 'none';
         if (unlockedScrollHint) unlockedScrollHint.style.display = 'flex';
+        if (introCountdownView) introCountdownView.style.display = 'none';
+        if (introUnwrapBtn) {
+          introUnwrapBtn.innerHTML = '<span>🎉 Tap to Unwrap Your Birthday Gift</span><span>✨</span>';
+        }
         
         if (!hasAutoCelebrated) {
           hasAutoCelebrated = true;
@@ -2736,16 +2791,27 @@
       celebrationView.style.display = 'none';
       if (lockedHintView) lockedHintView.style.display = 'flex';
       if (unlockedScrollHint) unlockedScrollHint.style.display = 'none';
+      if (introCountdownView) introCountdownView.style.display = 'block';
 
       const d = Math.floor(diff / (1000 * 60 * 60 * 24));
       const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
       const m = Math.floor((diff / (1000 * 60)) % 60);
       const s = Math.floor((diff / 1000) % 60);
 
-      daysEl.textContent = String(d).padStart(2, '0');
-      hoursEl.textContent = String(h).padStart(2, '0');
-      minutesEl.textContent = String(m).padStart(2, '0');
-      secondsEl.textContent = String(s).padStart(2, '0');
+      const dStr = String(d).padStart(2, '0');
+      const hStr = String(h).padStart(2, '0');
+      const mStr = String(m).padStart(2, '0');
+      const sStr = String(s).padStart(2, '0');
+
+      daysEl.textContent = dStr;
+      hoursEl.textContent = hStr;
+      minutesEl.textContent = mStr;
+      secondsEl.textContent = sStr;
+
+      if (introDaysEl) introDaysEl.textContent = dStr;
+      if (introHoursEl) introHoursEl.textContent = hStr;
+      if (introMinutesEl) introMinutesEl.textContent = mStr;
+      if (introSecondsEl) introSecondsEl.textContent = sStr;
     }
 
     setInterval(updateLockAndCountdown, 1000);
