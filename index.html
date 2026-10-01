@@ -1840,6 +1840,12 @@
       50% { transform: scale(1.02); opacity: 1; border-color: rgba(244, 180, 170, 0.8); box-shadow: 0 15px 35px rgba(220, 90, 130, 0.3); }
     }
 
+    @keyframes gentleShake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-8px); }
+      40%, 80% { transform: translateX(8px); }
+    }
+
     .locked-vault-title {
       font-family: var(--font-serif);
       color: var(--rose-gold-light);
@@ -1899,13 +1905,23 @@
           <span class="count-label">Seconds</span>
         </div>
       </div>
-      <div style="font-size: 0.82rem; color: var(--rose-gold-light); margin-top: 0.5rem; opacity: 0.9;">
-        🔒 Sealed with love • Automatically unlocks at Midnight 💌
-      </div>
     </div>
 
-    <button class="unwrap-btn" id="intro-unwrap-btn">
-      <span>Tap to Unwrap Your Gift</span>
+    <!-- Locked Vault Card on First Screen (Shown while timer is running) -->
+    <div id="intro-locked-vault-card" class="locked-vault-card" style="margin-top: 0; margin-bottom: 1.5rem;">
+      <div class="locked-vault-title">
+        <span>🔒</span>
+        <span>Gift Locked Until October 2</span>
+        <span>⏳</span>
+      </div>
+      <p class="locked-vault-desc">
+        Your timeline, memory gallery, and brother's letter are safely sealed. The moment the clock strikes October 2, the entire gift unlocks right here!
+      </p>
+    </div>
+
+    <!-- Unwrap button: ONLY revealed when timer finishes to enter 2nd page -->
+    <button class="unwrap-btn" id="intro-unwrap-btn" style="display: none; margin-top: 0.5rem;">
+      <span>🎉 Tap to Unwrap Your Gift</span>
       <span>✨</span>
     </button>
   </div>
@@ -2665,16 +2681,29 @@
     const introScreen = document.getElementById('gift-intro-screen');
     const introUnwrapBtn = document.getElementById('intro-unwrap-btn');
     const introSealBtn = document.getElementById('intro-seal-btn');
+    const introLockedCard = document.getElementById('intro-locked-vault-card');
 
     function unwrapGift() {
+      const now = new Date();
+      const target = getNextBirthdayDate();
+      const isUnlocked = isBirthdayToday() || (target - now) <= 0;
+      if (!isUnlocked) {
+        // Locked: gently shake the locked card to indicate waiting
+        if (introLockedCard) {
+          introLockedCard.style.animation = 'none';
+          introLockedCard.offsetHeight; // force reflow
+          introLockedCard.style.animation = 'gentleShake 0.4s ease-in-out';
+        }
+        return;
+      }
       if (introScreen.classList.contains('unwrapped')) return;
       introScreen.classList.add('unwrapped');
       triggerConfettiBurst(width / 2, height / 2, 80);
       playSynthChime(); // Gentle chime when unwrapped
     }
 
-    introUnwrapBtn.addEventListener('click', unwrapGift);
-    introSealBtn.addEventListener('click', unwrapGift);
+    if (introUnwrapBtn) introUnwrapBtn.addEventListener('click', unwrapGift);
+    if (introSealBtn) introSealBtn.addEventListener('click', unwrapGift);
 
     /* =========================================================================
        4. LIVE COUNTDOWN & CELEBRATION MODE
@@ -2723,7 +2752,9 @@
         if (celebrationView) celebrationView.style.display = 'block';
         if (unlockedScrollHint) unlockedScrollHint.style.display = 'flex';
         if (introCountdownView) introCountdownView.style.display = 'none';
+        if (introLockedCard) introLockedCard.style.display = 'none';
         if (introUnwrapBtn) {
+          introUnwrapBtn.style.display = 'inline-flex';
           introUnwrapBtn.innerHTML = '<span>🎉 Tap to Unwrap Your Birthday Gift</span><span>✨</span>';
         }
         
@@ -2740,6 +2771,8 @@
       if (celebrationView) celebrationView.style.display = 'block';
       if (unlockedScrollHint) unlockedScrollHint.style.display = 'none';
       if (introCountdownView) introCountdownView.style.display = 'block';
+      if (introLockedCard) introLockedCard.style.display = 'flex';
+      if (introUnwrapBtn) introUnwrapBtn.style.display = 'none';
 
       const d = Math.floor(diff / (1000 * 60 * 60 * 24));
       const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
