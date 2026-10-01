@@ -2723,20 +2723,13 @@
 
     function getNextBirthdayDate() {
       const now = new Date();
-      let targetYear = now.getFullYear();
-      let bday = new Date(targetYear, CONFIG.birthdayMonth, CONFIG.birthdayDay, 0, 0, 0);
-
-      // If Oct 2 for this year has passed and today is NOT Oct 2, target next year
-      const endOfBday = new Date(targetYear, CONFIG.birthdayMonth, CONFIG.birthdayDay, 23, 59, 59);
-      if (now > endOfBday) {
-        bday = new Date(targetYear + 1, CONFIG.birthdayMonth, CONFIG.birthdayDay, 0, 0, 0);
-      }
-      return bday;
+      // Test target: 7:00 PM (19:00:00) today
+      return new Date(now.getFullYear(), now.getMonth(), now.getDate(), 19, 0, 0);
     }
 
     function isBirthdayToday() {
       const now = new Date();
-      return (now.getMonth() === CONFIG.birthdayMonth && now.getDate() === CONFIG.birthdayDay);
+      return now >= getNextBirthdayDate();
     }
 
     function updateLockAndCountdown() {
