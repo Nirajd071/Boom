@@ -1,6 +1,6 @@
 # 🎂 Happy Birthday, Dii — Single-Page Gift Website
 
-A custom, single-page birthday website built for **Dii** from her brother **Kabeer**.
+A custom, single-page birthday website built for **Dii** from her brother **Niraj**.
 
 ---
 
@@ -41,7 +41,7 @@ A custom, single-page birthday website built for **Dii** from her brother **Kabe
    - Paper-textured vintage card with deckled borders, wax stamp, and handwriting font (`Caveat`).
    - Exact text as provided, word-for-word, preserving all Urdu/Hindi sentiments (*Khuda na khasta*, *kabhi chhod ke mat jaana*).
    - Paragraph-by-paragraph scroll reveal as she scrolls down.
-   - Pulsing heart next to your signature: `Your brother, Kabeer ❤️`.
+   - Pulsing heart next to your signature: `Your brother, Niraj ❤️`.
 
 6. **Why You're My Dii**:
    - Interactive 3D flip cards (touch friendly for phones, hover/click for desktop):
