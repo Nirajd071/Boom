@@ -1959,15 +1959,6 @@
           </div>
         </div>
 
-        <!-- Helpful developer/user toggle to test celebration view on any date -->
-        <div style="display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap; margin-top: 1rem;">
-          <button class="preview-toggle-btn" id="preview-celebration-toggle" title="Click to test the birthday day celebration state">
-            Preview Celebration Mode
-          </button>
-          <button class="preview-toggle-btn" id="test-20s-countdown-btn" style="background: rgba(220, 90, 130, 0.25); border-color: rgba(255, 180, 200, 0.5);" title="Start a 20-second live test countdown">
-            ⏱️ Test 20s Auto-Unlock
-          </button>
-        </div>
       </div>
 
       <!-- Locked Notice: Shown before October 2 to keep visitor on main page -->
@@ -2692,48 +2683,25 @@
     const secondsEl = document.getElementById('seconds-val');
     const countdownView = document.getElementById('countdown-timer-view');
     const celebrationView = document.getElementById('celebration-view');
-    const previewToggleBtn = document.getElementById('preview-celebration-toggle');
 
-    // LOCKED FOR AUTO-UNLOCK TEST:
-    // Website will count down to 18:20 today and automatically unlock!
-    let forceCelebrationPreview = false;
     let hasAutoCelebrated = false;
-    let customTargetTime = null;
-
-    // Show preview toggle button so mode can be toggled manually if desired
-    if (previewToggleBtn) {
-      previewToggleBtn.style.display = 'inline-block';
-    }
-
-    const test20sBtn = document.getElementById('test-20s-countdown-btn');
-    if (test20sBtn) {
-      test20sBtn.addEventListener('click', () => {
-        forceCelebrationPreview = false;
-        hasAutoCelebrated = false;
-        // Start 20-second countdown from this exact second!
-        customTargetTime = new Date(Date.now() + 20000);
-        updateLockAndCountdown();
-      });
-    }
 
     function getNextBirthdayDate() {
-      if (customTargetTime) {
-        return customTargetTime;
-      }
       const now = new Date();
-      const urlParams = new URLSearchParams(window.location.search);
-      const timeParam = urlParams.get('time');
-      if (timeParam && timeParam.includes(':')) {
-        const [h, m] = timeParam.split(':').map(Number);
-        return new Date(now.getFullYear(), now.getMonth(), now.getDate(), h, m, 0);
+      let targetYear = now.getFullYear();
+      let bday = new Date(targetYear, CONFIG.birthdayMonth, CONFIG.birthdayDay, 0, 0, 0);
+
+      // If Oct 2 for this year has passed and today is NOT Oct 2, target next year
+      const endOfBday = new Date(targetYear, CONFIG.birthdayMonth, CONFIG.birthdayDay, 23, 59, 59);
+      if (now > endOfBday) {
+        bday = new Date(targetYear + 1, CONFIG.birthdayMonth, CONFIG.birthdayDay, 0, 0, 0);
       }
-      // Target 18:35:00 today for live test
-      return new Date(now.getFullYear(), now.getMonth(), now.getDate(), 18, 35, 0);
+      return bday;
     }
 
     function isBirthdayToday() {
       const now = new Date();
-      return now >= getNextBirthdayDate();
+      return (now.getMonth() === CONFIG.birthdayMonth && now.getDate() === CONFIG.birthdayDay);
     }
 
     const lockedHintView = document.getElementById('locked-hint-view');
@@ -2743,7 +2711,7 @@
       const now = new Date();
       const target = getNextBirthdayDate();
       const diff = target - now;
-      const isUnlocked = forceCelebrationPreview || diff <= 0;
+      const isUnlocked = isBirthdayToday() || diff <= 0;
 
       if (isUnlocked) {
         // UNLOCKED STATE: Full scroll allowed, celebration banner shown
@@ -2754,7 +2722,7 @@
         if (lockedHintView) lockedHintView.style.display = 'none';
         if (unlockedScrollHint) unlockedScrollHint.style.display = 'flex';
         
-        if (!hasAutoCelebrated && !forceCelebrationPreview) {
+        if (!hasAutoCelebrated) {
           hasAutoCelebrated = true;
           triggerConfettiBurst(window.innerWidth / 2, window.innerHeight * 0.4, 150);
         }
@@ -2782,19 +2750,6 @@
 
     setInterval(updateLockAndCountdown, 1000);
     updateLockAndCountdown();
-    previewToggleBtn.textContent = forceCelebrationPreview ? "Switch to Countdown Mode" : "Preview Celebration Mode";
-
-    previewToggleBtn.addEventListener('click', () => {
-      forceCelebrationPreview = !forceCelebrationPreview;
-      if (forceCelebrationPreview) {
-        customTargetTime = null;
-      }
-      previewToggleBtn.textContent = forceCelebrationPreview ? "Switch Back to Countdown" : "Preview Celebration Mode";
-      updateLockAndCountdown();
-      if (forceCelebrationPreview) {
-        triggerConfettiBurst(window.innerWidth / 2, window.innerHeight * 0.4, 120);
-      }
-    });
 
     /* =========================================================================
        5. SOUND EFFECTS (Gentle chime for unwrapping & confetti)
