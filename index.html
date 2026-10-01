@@ -2689,39 +2689,35 @@
     const celebrationView = document.getElementById('celebration-view');
     const previewToggleBtn = document.getElementById('preview-celebration-toggle');
 
-    // UNLOCKED BY DEFAULT FOR TESTING:
-    // Entire website is fully accessible and unlocked.
-    const urlParams = new URLSearchParams(window.location.search);
-    let forceCelebrationPreview = urlParams.get('locked') === 'true' ? false : true;
+    // LOCKED FOR AUTO-UNLOCK TEST:
+    // Website will count down to 18:20 today and automatically unlock!
+    let forceCelebrationPreview = false;
+    let hasAutoCelebrated = false;
 
-    // Show preview toggle button so mode can be toggled at will
+    // Show preview toggle button so mode can be toggled manually if desired
     if (previewToggleBtn) {
       previewToggleBtn.style.display = 'inline-block';
     }
 
     function getNextBirthdayDate() {
       const now = new Date();
-      let targetYear = now.getFullYear();
-      let bday = new Date(targetYear, CONFIG.birthdayMonth, CONFIG.birthdayDay, 0, 0, 0);
-
-      // If Oct 2 for this year has passed and today is NOT Oct 2, target next year
-      const endOfBday = new Date(targetYear, CONFIG.birthdayMonth, CONFIG.birthdayDay, 23, 59, 59);
-      if (now > endOfBday) {
-        bday = new Date(targetYear + 1, CONFIG.birthdayMonth, CONFIG.birthdayDay, 0, 0, 0);
-      }
-      return bday;
+      // Targeted for testing at 18:20 today
+      return new Date(now.getFullYear(), now.getMonth(), now.getDate(), 18, 20, 0);
     }
 
     function isBirthdayToday() {
       const now = new Date();
-      return (now.getMonth() === CONFIG.birthdayMonth && now.getDate() === CONFIG.birthdayDay);
+      return now >= getNextBirthdayDate();
     }
 
     const lockedHintView = document.getElementById('locked-hint-view');
     const unlockedScrollHint = document.getElementById('unlocked-scroll-hint');
 
     function updateLockAndCountdown() {
-      const isUnlocked = forceCelebrationPreview || isBirthdayToday();
+      const now = new Date();
+      const target = getNextBirthdayDate();
+      const diff = target - now;
+      const isUnlocked = forceCelebrationPreview || diff <= 0;
 
       if (isUnlocked) {
         // UNLOCKED STATE: Full scroll allowed, celebration banner shown
@@ -2731,6 +2727,11 @@
         celebrationView.style.display = 'block';
         if (lockedHintView) lockedHintView.style.display = 'none';
         if (unlockedScrollHint) unlockedScrollHint.style.display = 'flex';
+        
+        if (!hasAutoCelebrated && !forceCelebrationPreview) {
+          hasAutoCelebrated = true;
+          triggerConfettiBurst(window.innerWidth / 2, window.innerHeight * 0.4, 150);
+        }
         return;
       }
 
@@ -2741,17 +2742,6 @@
       celebrationView.style.display = 'none';
       if (lockedHintView) lockedHintView.style.display = 'flex';
       if (unlockedScrollHint) unlockedScrollHint.style.display = 'none';
-
-      const now = new Date();
-      const target = getNextBirthdayDate();
-      const diff = target - now;
-
-      if (diff <= 0) {
-        if (countdownWrap) countdownWrap.classList.add('is-celebrating');
-        countdownView.style.display = 'none';
-        celebrationView.style.display = 'block';
-        return;
-      }
 
       const d = Math.floor(diff / (1000 * 60 * 60 * 24));
       const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
