@@ -1942,37 +1942,9 @@
         "from a stranger on 16 Feb to my Dii"
       </p>
 
-      <!-- Countdown Container -->
-      <div class="countdown-container" id="countdown-wrap">
-        <!-- Live Countdown Mode -->
-        <div id="countdown-timer-view">
-          <div class="countdown-title">
-            <span>⏳</span>
-            <span>Counting down to October 2</span>
-            <span>✨</span>
-          </div>
-          <div class="countdown-grid">
-            <div class="count-unit">
-              <span class="count-number" id="days-val">00</span>
-              <span class="count-label">Days</span>
-            </div>
-            <div class="count-unit">
-              <span class="count-number" id="hours-val">00</span>
-              <span class="count-label">Hours</span>
-            </div>
-            <div class="count-unit">
-              <span class="count-number" id="minutes-val">00</span>
-              <span class="count-label">Minutes</span>
-            </div>
-            <div class="count-unit">
-              <span class="count-number" id="seconds-val">00</span>
-              <span class="count-label">Seconds</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Birthday Day Celebration Mode (Shown when date is Oct 2) -->
-        <div class="celebration-box" id="celebration-view">
+      <!-- Celebration Showcase Container in Hero -->
+      <div class="countdown-container is-celebrating" id="countdown-wrap">
+        <div class="celebration-box" id="celebration-view" style="display: block;">
           <div class="celebration-badge">
             <span class="badge-sparkle">✨</span>
             <span>October 2 • Today is Special</span>
@@ -2002,24 +1974,11 @@
             <span class="cel-float-emoji" style="animation-delay: 1.5s;">🌸</span>
           </div>
         </div>
-
       </div>
 
-      <!-- Locked Notice: Shown before October 2 to keep visitor on main page -->
-      <div id="locked-hint-view" class="locked-vault-card">
-        <div class="locked-vault-title">
-          <span>🔒</span>
-          <span>Gift Locked Until October 2</span>
-          <span>⏳</span>
-        </div>
-        <p class="locked-vault-desc">
-          Your timeline, memory gallery, and brother's letter are safely sealed. The moment the clock strikes October 2, the entire gift unlocks right here!
-        </p>
-      </div>
-
-      <!-- Scroll Down Hint: ONLY revealed when unlocked on October 2 or via preview button -->
-      <a href="#our-story" id="unlocked-scroll-hint" class="scroll-hint" aria-label="Scroll down to unwrap our story" style="display: none;">
-        <span>✨ Unlocked! Scroll to view your gift ✨</span>
+      <!-- Scroll Down Hint -->
+      <a href="#our-story" id="unlocked-scroll-hint" class="scroll-hint" aria-label="Scroll down to unwrap our story">
+        <span>✨ Scroll to explore our memories ✨</span>
         <div class="scroll-mouse">
           <div class="scroll-wheel"></div>
         </div>
@@ -2721,12 +2680,8 @@
        4. LIVE COUNTDOWN & CELEBRATION MODE
        ========================================================================= */
     const countdownWrap = document.getElementById('countdown-wrap');
-    const daysEl = document.getElementById('days-val');
-    const hoursEl = document.getElementById('hours-val');
-    const minutesEl = document.getElementById('minutes-val');
-    const secondsEl = document.getElementById('seconds-val');
-    const countdownView = document.getElementById('countdown-timer-view');
     const celebrationView = document.getElementById('celebration-view');
+    const unlockedScrollHint = document.getElementById('unlocked-scroll-hint');
 
     // First page (intro screen) countdown elements
     const introCountdownView = document.getElementById('intro-countdown-view');
@@ -2755,9 +2710,6 @@
       return (now.getMonth() === CONFIG.birthdayMonth && now.getDate() === CONFIG.birthdayDay);
     }
 
-    const lockedHintView = document.getElementById('locked-hint-view');
-    const unlockedScrollHint = document.getElementById('unlocked-scroll-hint');
-
     function updateLockAndCountdown() {
       const now = new Date();
       const target = getNextBirthdayDate();
@@ -2768,9 +2720,7 @@
         // UNLOCKED STATE: Full scroll allowed, celebration banner shown
         document.body.classList.remove('is-locked');
         if (countdownWrap) countdownWrap.classList.add('is-celebrating');
-        countdownView.style.display = 'none';
-        celebrationView.style.display = 'block';
-        if (lockedHintView) lockedHintView.style.display = 'none';
+        if (celebrationView) celebrationView.style.display = 'block';
         if (unlockedScrollHint) unlockedScrollHint.style.display = 'flex';
         if (introCountdownView) introCountdownView.style.display = 'none';
         if (introUnwrapBtn) {
@@ -2786,10 +2736,8 @@
 
       // LOCKED STATE: Strictly locked to main page, no scrolling down
       document.body.classList.add('is-locked');
-      if (countdownWrap) countdownWrap.classList.remove('is-celebrating');
-      countdownView.style.display = 'block';
-      celebrationView.style.display = 'none';
-      if (lockedHintView) lockedHintView.style.display = 'flex';
+      if (countdownWrap) countdownWrap.classList.add('is-celebrating');
+      if (celebrationView) celebrationView.style.display = 'block';
       if (unlockedScrollHint) unlockedScrollHint.style.display = 'none';
       if (introCountdownView) introCountdownView.style.display = 'block';
 
@@ -2802,11 +2750,6 @@
       const hStr = String(h).padStart(2, '0');
       const mStr = String(m).padStart(2, '0');
       const sStr = String(s).padStart(2, '0');
-
-      daysEl.textContent = dStr;
-      hoursEl.textContent = hStr;
-      minutesEl.textContent = mStr;
-      secondsEl.textContent = sStr;
 
       if (introDaysEl) introDaysEl.textContent = dStr;
       if (introHoursEl) introHoursEl.textContent = hStr;
