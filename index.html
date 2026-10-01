@@ -2815,7 +2815,11 @@
       return morning10am;
     }
 
+    // Testing mode: Unlocked by default right now so Niraj can test!
+    let testUnlockedMode = localStorage.getItem('test_unlock') !== 'false';
+
     function isBirthdayToday() {
+      if (testUnlockedMode) return true;
       const now = new Date();
       const currentYear = now.getFullYear();
       const morning10am = new Date(currentYear, CONFIG.birthdayMonth, CONFIG.birthdayDay, 10, 0, 0);
@@ -3144,5 +3148,11 @@
       playSynthChime();
     });
   </script>
+
+  <!-- Floating Testing Mode Switcher -->
+  <button id="test-mode-toggle" style="position: fixed; bottom: 16px; right: 16px; z-index: 999999; background: rgba(25, 8, 22, 0.85); color: #ffb8d0; border: 1px solid rgba(255, 184, 208, 0.45); padding: 9px 16px; border-radius: 30px; font-size: 13px; font-weight: 500; cursor: pointer; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); box-shadow: 0 4px 20px rgba(0,0,0,0.5); display: flex; align-items: center; gap: 6px; transition: all 0.3s ease;">
+    <span id="test-toggle-icon">🔒</span> <span id="test-toggle-text">Re-lock for Dii</span>
+  </button>
+
 </body>
 </html>
